@@ -4,11 +4,11 @@
 # def make_a_new_movie_instance    # def make_a_new_movie_instance
 #   movie = __                     #   movie = Movie.new
 # end                              # end
-
+require 'pry'
 def can_be_instantiated_and_then_saved
-  movie = __
+  movie = Movie.new
   movie.title = "This is a title."
-  __
+  movie.save
 end
 
 def can_be_created_with_a_hash_of_attributes
@@ -19,84 +19,96 @@ def can_be_created_with_a_hash_of_attributes
       lead: "Paul Newman",
       in_theaters: false
   }
-  movie = __
+  movie = Movie.create(attributes)
 end
 
-def can_be_created_in_a_block(args = __)
+def can_be_created_in_a_block(args = {})
   Movie.create do |m|
-    __
+    #binding.pry
+    m.title = args[:title] || "Home Alone"
+    m.release_date = args[:release_date] || 1990
+    m.director = args[:director]
+    m.lead = args[:lead]
+    m.in_theaters = args[:in_theaters]
+    #binding.pry
   end
+
 end
 
 def can_get_the_first_item_in_the_database
-  __
+  Movie.all.first[:title]
 end
 
 def can_get_the_last_item_in_the_database
-  __
+  Movie.all.last[:title]
 end
 
 def can_get_size_of_the_database
-  __
+  Movie.all.count
 end
 
 def can_find_the_first_item_from_the_database_using_id
-  __
+  Movie.all.find{|el| el.id == 1}[:title]
 end
 
 def can_find_by_multiple_attributes
   # title == "Title"
   # release_date == 2000
   # director == "Me"
-  __
+  Movie.all.find{|el| el.title == "Title" &&
+    el.release_date == 2000 && el.director == "Me"}
+
 end
 
 def can_find_using_where_clause_and_be_sorted
-  # For this test return all movies released after 2002 and ordered by 
+  # For this test return all movies released after 2002 and ordered by
   # release date descending
-  __
+  Movie.all.select{|m| m.release_date > 2002}.sort.reverse
 end
 
 def can_be_found_updated_and_saved
   # Updtate the title "Awesome Flick" to "Even Awesomer Flick"
   Movie.create(title: "Awesome Flick")
-  __
-  __
-  __
+  m = Movie.find_by(title: "Awesome Flick")
+  m.update(title: "Even Awesomer Flick")
+  m
 end
 
 def can_update_using_update_method
   # Update movie title to "Wat, huh?"
   Movie.create(title: "Wat?")
-  __
-  __
+  m = Movie.find_by(title: "Wat?")
+  Movie.update(m, title: "Wat, huh?")
+  m
 end
 
 def can_update_multiple_items_at_once
   # Change title of all movies to "A Movie"
+  arr = []
   5.times do |i|
     Movie.create(title: "Movie_#{i}", release_date: 2000+i)
   end
-  __
+  5.times do |i|
+    temp = Movie.find_by(title: "Movie_#{i}")
+    arr << temp
+  end
+  arr.each {|i| Movie.update(i, title: "A Movie")}
 end
 
 def can_destroy_a_single_item
   Movie.create(title: "That One Where the Guy Kicks Another Guy Once")
-  __
-  __
+  m = Movie.find_by(title: "That One Where the Guy Kicks Another Guy Once")
+  Movie.destroy(m)
 end
 
 def can_destroy_all_items_at_once
+  arr = []
   10.times do |i|
     Movie.create(title: "Movie_#{i}")
   end
-  __
+  10.times do |i|
+    temp = Movie.find_by(title: "Movie_#{i}")
+    arr << temp
+  end
+  arr.each {|i| Movie.destroy(i)}
 end
-
-
-
-
-
-
-
-
